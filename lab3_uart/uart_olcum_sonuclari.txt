@@ -1,0 +1,21 @@
+LAB 3 - GOREV 1: UART GERI DONGU
+
+Kart: ESP32 DEVKIT V1
+Baglanti: GPIO17 (TX2) -> GPIO18 (D18)
+Veri: Merhaba Lab 3 UART!
+
+Deney 1:
+TX baud: 115200
+RX baud: 115200
+Sonuc: Gonderilen metin eksiksiz alindi.
+
+Deney 2:
+TX baud: 115200
+RX baud: 9600
+Sonuc: 2 bayt alindi (HEX: 90 F3).
+Metin dogru okunamadi.
+
+Degerlendirme:
+Baud hizi uyumsuzlugu UART verisinin bozulmasina
+neden oldu. Sonuclar ESP-IDF seri port loglariyla
+gozlemlendi. Lojik analizor olcumu yapilmadi.
