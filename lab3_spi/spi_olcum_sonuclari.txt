@@ -1,0 +1,21 @@
+LAB 3 - GOREV 3: SPI GERI DONGU
+
+Kart: ESP32 DEVKIT V1
+Baglanti: GPIO23 (MOSI) -> GPIO19 (MISO)
+SPI frekansi: 100 kHz
+
+SPI MOD 0
+Gonderilen: 12 34 56 78
+Alinan:     12 34 56 78
+Sonuc: BASARILI
+
+SPI MOD 3
+Gonderilen: 12 34 56 78
+Alinan:     12 34 56 78
+Sonuc: BASARILI
+
+Degerlendirme:
+Her iki SPI modunda da 4 bayt veri eksiksiz
+geri alindi. Yazilimsal veri karsilastirmasi
+basarili oldu. Lojik analizor kullanilmadigi
+icin fiziksel sinyal olcumu yapilmadi.
