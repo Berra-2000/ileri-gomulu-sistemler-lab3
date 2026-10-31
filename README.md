@@ -1,51 +1,151 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C5 | ESP32-C6 | ESP32-C61 | ESP32-H2 | ESP32-H21 | ESP32-P4 | ESP32-S2 | ESP32-S3 | ESP32-S31 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | --------- | -------- | --------- | -------- | -------- | -------- | --------- |
+# İleri Gömülü Sistemler – Lab 3
 
-# Basic I2C Master Example
+## ESP32 ile UART, SPI ve I²C Haberleşme Protokollerinin İncelenmesi
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+Bu GitHub deposu, İleri Gömülü Sistemler dersi kapsamında ESP32 geliştirme kartı kullanılarak gerçekleştirilen UART, SPI ve I²C haberleşme deneylerine ait kaynak kodları, yapılandırma dosyaları ve deney kayıtlarını içermektedir.
 
-## Overview
+Çalışmanın amacı, gömülü sistemlerde yaygın kullanılan haberleşme protokollerinin çalışma prensiplerini uygulamalı olarak öğrenmek, veri iletimini test etmek ve donanım-yazılım etkileşimini incelemektir.
 
-This example demonstrates basic usage of I2C driver by reading and writing from a I2C connected sensor:
+Deneylerde ESP-IDF geliştirme ortamı kullanılmıştır. Çalışma sürecinde OpenAI tarafından geliştirilen ChatGPT (GPT-6) aracından teknik açıklama, hata ayıklama ve öğrenme desteği alınmıştır.
 
-If you have a new I2C application to go (for example, read the temperature data from external sensor with I2C interface), try this as a basic template, then add your own code.
+## 1. UART Haberleşme Deneyi
 
-## How to use example
+UART (Universal Asynchronous Receiver/Transmitter), cihazlar arasında asenkron seri veri iletişimi sağlayan bir haberleşme yöntemidir.
 
-### Hardware Required
+Bu deneyde ESP32 üzerinde UART loopback bağlantısı kullanılarak gönderilen verilerin geri alınması test edilmiştir.
 
-To run this example, you should have an Espressif development board based on a chip listed in supported targets as well as a MPU9250. MPU9250 is a inertial measurement unit, which contains a accelerometer, gyroscope as well as a magnetometer, for more information about it, you can read the [datasheet of the MPU9250 sensor](https://download.mikroe.com/documents/datasheets/PS-MPU-9250A-01-v1.1.pdf).
+**Gerçekleştirilen işlemler:**
 
-#### Pin Assignment
+- GPIO17 ve GPIO18 pinleri üzerinden UART loopback bağlantısının denenmesi.
+- Seri veri gönderme ve alma işlemlerinin uygulanması.
+- Gönderilen ve alınan verilerin karşılaştırılması.
+- Farklı baud rate ayarlarının haberleşme üzerindeki etkisinin incelenmesi.
 
-**Note:** The following pin assignments are used by default, you can change these in the `menuconfig` .
+Deneyin kaynak kodları ve ilgili dosyaları `lab3_uart/` klasöründe bulunmaktadır.
 
-|                  | SDA             | SCL           |
-| ---------------- | -------------- | -------------- |
-| ESP I2C Master   | I2C_MASTER_SDA | I2C_MASTER_SCL |
-| MPU9250 Sensor   | SDA            | SCL            |
+## 2. SPI Haberleşme Deneyi
 
-For the actual default value of `I2C_MASTER_SDA` and `I2C_MASTER_SCL` see `Example Configuration` in `menuconfig`.
+SPI (Serial Peripheral Interface), senkron seri haberleşme sağlayan ve veri aktarımında saat sinyalinden yararlanan bir protokoldür.
 
-**Note:** There's no need to add an external pull-up resistors for SDA/SCL pin, because the driver will enable the internal pull-up resistors.
+Bu deneyde ESP32 üzerinde MOSI ve MISO hatları arasında loopback bağlantısı kullanılarak veri iletimi test edilmiştir.
 
-### Build and Flash
+**Gerçekleştirilen işlemler:**
 
-Enter `idf.py -p PORT flash monitor` to build, flash and monitor the project.
+- MOSI ve MISO hatlarının loopback bağlantısının kurulması.
+- Dört baytlık veri gönderme ve alma işlemlerinin uygulanması.
+- Gönderilen ve alınan verilerin karşılaştırılması.
+- SPI Mode 0 ve Mode 3 yapılandırmalarının denenmesi.
+- Deney sonuçlarının kayıt altına alınması.
 
-(To exit the serial monitor, type ``Ctrl-]``.)
+Deneyin kaynak kodları `lab3_spi/` klasöründe, ölçüm notları ise `spi_olcum_sonuclari.txt` dosyasında bulunmaktadır.
 
-See the [Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) for full steps to configure and use ESP-IDF to build projects.
+## 3. I²C Haberleşme Deneyi – MPU6050
 
-## Example Output
+I²C (Inter-Integrated Circuit), SDA veri hattı ve SCL saat hattı üzerinden haberleşme sağlayan senkron bir iletişim protokolüdür.
 
-```bash
-I (328) example: I2C initialized successfully
-I (338) example: WHO_AM_I = 71
-I (338) example: I2C de-initialized successfully
+Bu deneyde ESP32 geliştirme kartı ile GY-521 MPU6050 sensör modülü arasında I²C haberleşmesi gerçekleştirilmiştir.
+
+### Donanım Bağlantıları
+
+| MPU6050 | ESP32 |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO21 |
+| SCL | GPIO22 |
+
+I²C haberleşme frekansı 400 kHz olarak kullanılmıştır.
+
+### Gerçekleştirilen İşlemler
+
+- ESP32 ile MPU6050 arasında I²C bağlantısının kurulması.
+- Sensörün `WHO_AM_I` yazmacının (`0x75`) okunması.
+- Deney sırasında `0x72` değerinin gözlemlenmesi.
+- `PWR_MGMT_1` yazmacına (`0x6B`) `0x00` değeri yazılarak sensörün uyandırılması.
+- X, Y ve Z eksenlerine ait ivme verilerinin okunması.
+- Sensör hareket ettirildiğinde ivme verilerindeki değişimlerin gözlemlenmesi.
+- Yaklaşık 100 milisaniye aralıklarla sensör verilerinin alınması.
+
+**Deney gözlemi:** Sensörün fiziksel konumu değiştirildiğinde X, Y ve Z eksenlerinden okunan değerlerin de değiştiği görülmüştür.
+
+`WHO_AM_I` yazmacından okunan `0x72` değeri deneyde elde edilen gözlemdir; sensör kimliğinin kesin doğrulaması olarak değerlendirilmemiştir.
+
+Deneyin kaynak kodları ve yapılandırma dosyaları `lab3_i2c/` klasöründe bulunmaktadır.
+
+## 4. Kullanılan Donanım ve Yazılımlar
+
+**Donanım:**
+
+- ESP32 DEVKIT V1 geliştirme kartı
+- GY-521 MPU6050 sensör modülü
+- USB bağlantı kablosu
+- Breadboard ve jumper kablolar
+
+**Yazılım ve geliştirme ortamı:**
+
+- macOS
+- ESP-IDF 6.1
+- C programlama dili
+- GitHub
+- ChatGPT (GPT-6) – eğitim ve teknik destek amacıyla
+
+## 5. GitHub Proje Yapısı
+
+```text
+ileri-gomulu-sistemler-lab3/
+│
+├── lab3_uart/
+│   └── UART deney dosyaları
+│
+├── lab3_spi/
+│   ├── main/
+│   ├── CMakeLists.txt
+│   ├── README.md
+│   ├── sdkconfig
+│   └── spi_olcum_sonuclari.txt
+│
+├── lab3_i2c/
+│   ├── main/
+│   │   ├── i2c_basic_example_main.c
+│   │   ├── CMakeLists.txt
+│   │   └── Kconfig.projbuild
+│   ├── CMakeLists.txt
+│   ├── README.md
+│   └── sdkconfig
+│
+└── README.md
 ```
 
-## Troubleshooting
+## 6. Sonuç ve Değerlendirme
 
-(For any technical queries, please open an [issue](https://github.com/espressif/esp-idf/issues) on GitHub. We will get back to you as soon as possible.)
+Bu laboratuvar çalışmasında ESP32 üzerinde UART, SPI ve I²C haberleşme protokolleri uygulamalı olarak incelenmiştir.
+
+UART ve SPI deneylerinde loopback yöntemiyle veri gönderme ve alma işlemleri denenmiştir. I²C deneyinde ise MPU6050 sensöründen ivme verileri okunmuş ve sensör hareket ettirildiğinde değerlerin değiştiği gözlemlenmiştir.
+
+Bu çalışmalar sayesinde seri haberleşme protokolleri, ESP-IDF ile gömülü yazılım geliştirme, GPIO yapılandırmaları, sensör haberleşmesi ve hata ayıklama konularında uygulamalı deneyim kazanılmıştır.
+
+I²C deneyinde oluşturulan ESP32–MPU6050 haberleşme altyapısı, ilerleyen aşamada geliştirilecek eğim algılama ve alarm sistemi için de temel oluşturmaktadır.
+
+Bu depoda mantık analizörüyle elde edilmiş ölçüm kayıtları sunulmamaktadır.
+
+## 7. Yapay Zekâ Kullanım Beyanı
+
+Bu laboratuvar çalışmasının hazırlanması sırasında OpenAI tarafından geliştirilen **ChatGPT (GPT-6)** yapay zekâ aracından eğitim, teknik danışmanlık ve dokümantasyon desteği amacıyla yararlanılmıştır.
+
+Yapay zekâ desteği aşağıdaki alanlarda kullanılmıştır:
+
+- UART, SPI ve I²C haberleşme protokollerinin teorik olarak açıklanması.
+- ESP32 ve ESP-IDF geliştirme ortamının anlaşılması.
+- C programlama kodlarının açıklanması ve hata ayıklama sürecinde öneriler sunulması.
+- MPU6050 sensörüyle haberleşme sürecindeki teknik sorunların değerlendirilmesi.
+- Deneylerin aşamalara ayrılması ve uygulama sürecinin planlanması.
+- GitHub dosya ve klasör yapısının düzenlenmesi.
+- README dokümantasyonunun hazırlanması ve akademik anlatımın iyileştirilmesi.
+
+**Deneylerin fiziksel uygulanması, donanım bağlantılarının gerçekleştirilmesi, kodların çalıştırılması, çıktılarının gözlemlenmesi ve sonuçlar değerlendirilmiştir.**
+
+ChatGPT, çalışmanın bağımsız yazarı veya deneyleri gerçekleştiren tarafı değildir. Yapay zekâ tarafından sağlanan teknik öneriler, uygulama sürecinde test edilerek değerlendirilmiştir.
+
+## 8. Genel Not
+
+Bu depo, İleri Gömülü Sistemler dersi kapsamında eğitim ve akademik çalışma amacıyla hazırlanmıştır. Deney sonuçları kullanılan donanım, yazılım sürümü ve yapılandırmaya bağlı olarak değişiklik gösterebilir.
