@@ -69,7 +69,23 @@ void app_main(void)
     ESP_ERROR_CHECK(
         i2c_new_master_bus(&bus_config, &bus_handle)
     );
+    ESP_LOGI(TAG, "I2C veri yolu taraniyor...");
 
+    for (uint8_t addr = 0x08; addr <= 0x77; addr++)
+    {
+        esp_err_t result = i2c_master_probe(
+            bus_handle,
+            addr,
+            I2C_MASTER_TIMEOUT_MS
+        );
+
+        if (result == ESP_OK)
+        {
+            ESP_LOGI(TAG, "I2C cihaz bulundu: 0x%02X", addr);
+        }
+    }
+
+    ESP_LOGI(TAG, "I2C tarama tamamlandi");
     i2c_device_config_t dev_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = MPU6050_SENSOR_ADDR,
